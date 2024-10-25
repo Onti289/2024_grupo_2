@@ -42,7 +42,7 @@ public class TestAuto {
         Cliente cliente = new Cliente("lau","atr","lautaro");
         
         Pedido pedido1 = new Pedido(cliente, 2, true, true, 10, "ZONA_STANDARD");
-        Pedido pedido2 = new Pedido(cliente, 8, false, false, 10, "ZONA_STANDARD");
+        Pedido pedido2 = new Pedido(cliente, 80, false, false, 10, "ZONA_STANDARD");
         
         int prueba1 = auto1.getPuntajePedido(pedido1);
         assertEquals("El puntaje debería ser 80", 80, prueba1);
