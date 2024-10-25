@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="TPFinal_TdPI/Client/src/main/java"/>
-	<classpathentry kind="lib" path="C:/Users/Lucas/Downloads/SubiQueTeLlevo.jar"/>
+	<classpathentry kind="lib" path="SubiQueTeLlevo.jar"/>
 	<classpathentry kind="output" path="TPFinal_TdPI/bin"/>
 </classpath>
