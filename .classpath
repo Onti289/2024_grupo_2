@@ -7,6 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="src" path="TPFinal_TdPI/Client/src/main/java"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="SubiQueTeLlevo.jar"/>
 	<classpathentry kind="output" path="TPFinal_TdPI/bin"/>
 </classpath>
