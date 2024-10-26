@@ -1,4 +1,4 @@
-package modelo_de_datos;
+package testModelo_de_datos;
 
 import static org.junit.Assert.*;
 
