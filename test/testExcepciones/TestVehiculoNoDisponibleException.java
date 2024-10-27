@@ -40,7 +40,7 @@ public class TestVehiculoNoDisponibleException {
         pedido2 = new Pedido(cliente2, 2, true, true, 12, "ZONA_STANDARD");
         chofer1 = new ChoferTemporario("111", "Messi");
         empresa.agregarChofer(chofer1);
-        chofer1 = new ChoferTemporario("777", "Adolfo");
+        chofer2 = new ChoferTemporario("777", "Adolfo");
         empresa.agregarChofer(chofer1);
         auto1 = new Auto("123", 4, true);
         empresa.agregarVehiculo(auto1);
@@ -57,8 +57,8 @@ public class TestVehiculoNoDisponibleException {
 	public void test() throws SinVehiculoParaPedidoException, ClienteNoExisteException, ClienteConViajePendienteException, ClienteConPedidoPendienteException, PedidoInexistenteException, ChoferNoDisponibleException, VehiculoNoValidoException {
 		try {
 	        empresa.agregarPedido(pedido1);
-	        empresa.crearViaje(pedido1, chofer1, auto1);
 	        empresa.agregarPedido(pedido2);
+	        empresa.crearViaje(pedido1, chofer1, auto1);      
 	        empresa.crearViaje(pedido2, chofer2, auto1);
 	        
 			fail("Se esperaba que salte la excepcion VehiculoNoDisponibleException");
