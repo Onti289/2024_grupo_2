@@ -1,0 +1,15 @@
+
+TPFinal_TdPI/bin/testModelo_de_datos/TestUsuario.class
+*.class
+*.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestChofer.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestChoferPermanente.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestChoferTemporario.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestCliente.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestCombi.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestMoto.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestPedido.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestUsuario.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestVehiculo.class
+TPFinal_TdPI/bin/testModelo_de_datos/TestViaje.class
+TPFinal_TdPI/bin/testModelo_de_negocios/TestEmpresa.class

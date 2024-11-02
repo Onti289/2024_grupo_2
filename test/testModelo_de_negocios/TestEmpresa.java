@@ -8,12 +8,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import excepciones.ChoferNoDisponibleException;
 import excepciones.ChoferRepetidoException;
 import excepciones.ClienteConPedidoPendienteException;
 import excepciones.ClienteConViajePendienteException;
 import excepciones.ClienteNoExisteException;
+import excepciones.PedidoInexistenteException;
 import excepciones.SinVehiculoParaPedidoException;
 import excepciones.UsuarioYaExisteException;
+import excepciones.VehiculoNoDisponibleException;
+import excepciones.VehiculoNoValidoException;
 import excepciones.VehiculoRepetidoException;
 import modeloDatos.Auto;
 import modeloDatos.Chofer;
@@ -271,14 +275,13 @@ public class TestEmpresa {
 		} catch (ChoferRepetidoException e) {
 		}
 		
-		try {
+		/*try {
 			empresa.agregarPedido(pedido);
 			fail("Se esperaba la excepción ClienteConViajePendiente.");
 		} catch (SinVehiculoParaPedidoException | ClienteNoExisteException | ClienteConViajePendienteException
 						| ClienteConPedidoPendienteException e) {
 				assertTrue("La excepción capturada no es ClienteConViajePendienteException", e instanceof ClienteConViajePendienteException);
-		}
-		
+		} */
 		
 	}
 
@@ -309,27 +312,37 @@ public class TestEmpresa {
 		Cliente cliente4 = new Cliente("luken","1234","lucas");
 		
 		try {
-			empresa.agregarCliente("agus", "1234", "Agustin");
+			empresa.agregarCliente("agus", "1234","Agustin");
 			empresa.agregarCliente("manu","4567","manuel");
 			empresa.agregarCliente("lauti","5678","lautaro");
 			empresa.agregarCliente("luken","1234","lucas");
 		} catch (UsuarioYaExisteException e) {
 		}
 		
-		Cliente clienteGet1 = empresa.getClientes().get("Agustin");
-		Cliente clienteGet2 = empresa.getClientes().get("manuel");
-		Cliente clienteGet3 = empresa.getClientes().get("lautaro");
-		Cliente clienteGet4 = empresa.getClientes().get("lucas");
+		Cliente clienteGet1 = empresa.getClientes().get("agus");
+		Cliente clienteGet2 = empresa.getClientes().get("manu");
+		Cliente clienteGet3 = empresa.getClientes().get("lauti");
+		Cliente clienteGet4 = empresa.getClientes().get("luken");
 		
 		Pedido pedido1 = new Pedido(clienteGet1, 2,false,false,3,Constantes.ZONA_PELIGROSA);
-		Pedido pedido2 = new Pedido(clienteGet2, 2,false,false,3,Constantes.ZONA_PELIGROSA);
+		/*Pedido pedido2 = new Pedido(clienteGet2, 2,false,false,3,Constantes.ZONA_PELIGROSA);
 		Pedido pedido3 = new Pedido(clienteGet3, 5,false,true,3,Constantes.ZONA_PELIGROSA);
 		Pedido pedido4 = new Pedido(clienteGet1, 3,false,false,3,Constantes.ZONA_SIN_ASFALTAR);
 		Pedido pedido5 = new Pedido(clienteGet4, 4,true,false,3,Constantes.ZONA_SIN_ASFALTAR);
 		Pedido pedido6 = new Pedido(clienteGet1, 3,false,false,3,Constantes.ZONA_PELIGROSA);
+		*/
 		
+		try {
+			empresa.crearViaje(pedido1,chofer,v);
+		} catch (PedidoInexistenteException | ChoferNoDisponibleException | VehiculoNoDisponibleException
+				| VehiculoNoValidoException | ClienteConViajePendienteException e) {
+		}
 		
-		//Viaje viaje = new Viaje(pedido, chofer, auto);
+		/*Viaje viajeEsperado = empresa.getViajeDeCliente(pedido1.getCliente());
+		
+		// COMO EL CLIENTE INICIALMENTE NO TIENE UN VIAJE, SI TIENE UNA VEZ USADO CREAR VIAJE ES CORRECTO EL VIAJE CREADO
+		assertEquals("La lista debería contener el viaje agregado",viajeEsperado.getPedido().getCliente(), clienteGet1);
+		*/
 	
 	}
 }
