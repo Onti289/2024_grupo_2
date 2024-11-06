@@ -27,7 +27,6 @@ import excepciones.VehiculoRepetidoException;
 import modeloDatos.Auto;
 import modeloDatos.Chofer;
 import modeloDatos.ChoferPermanente;
-import modeloDatos.ChoferTemporario;
 import modeloDatos.Cliente;
 import modeloDatos.Pedido;
 import modeloDatos.Usuario;
@@ -910,6 +909,3 @@ public class TestEmpresa {
 	}
 
 }
-
-
-
