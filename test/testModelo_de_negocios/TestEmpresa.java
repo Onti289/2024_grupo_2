@@ -41,12 +41,12 @@ public class TestEmpresa {
 	@Before
 	public void setUp() throws Exception {
 		empresa = Empresa.getInstance();
-		 empresa.getClientes().clear();
-		 empresa.getChoferes().clear();
-		 empresa.getVehiculos().clear();
-		 empresa.getPedidos().clear();
-		 empresa.getViajesIniciados().clear();
-		 empresa.getVehiculosDesocupados().clear();
+		empresa.getClientes().clear();
+		empresa.getChoferes().clear();
+		empresa.getVehiculos().clear();
+		empresa.getPedidos().clear();
+		empresa.getViajesIniciados().clear();
+		empresa.getVehiculosDesocupados().clear();
 	}
 
 	@After
