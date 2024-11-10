@@ -1,6 +1,5 @@
 package testGUI;
 
-
 import java.awt.AWTException;
 import java.awt.Robot;
 
@@ -57,26 +56,26 @@ public class TestDatos
     
     
 
-    @Test
-    public void testLogOk()
-    {
-        robot.delay(TestUtils.getDelay());
+    //@Test
+    //public void testLogOk()
+    //{
+        //robot.delay(TestUtils.getDelay());
         //obtengo las referencias a los componentes necesarios
-        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
-        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
-        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+        //JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        //JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        //JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
 
         //lleno los JTextField
-        TestUtils.clickComponent(nombre, robot);
-        TestUtils.tipeaTexto("Agus", robot);
-        TestUtils.clickComponent(contrasena, robot);
-        TestUtils.tipeaTexto("Asd123", robot);
-        TestUtils.clickComponent(aceptarLog, robot);
+        //TestUtils.clickComponent(nombre, robot);
+        //TestUtils.tipeaTexto("Agus", robot);
+        //TestUtils.clickComponent(contrasena, robot);
+        //TestUtils.tipeaTexto("Asd123", robot);
+        //TestUtils.clickComponent(aceptarLog, robot);
         //verifico los resultados
         
         //Assert.assertEquals("Deberia coincidir el nombre de usuario con el nombre ingresado", "juan",controlador.getUsuarioactual().getNombre());
         //Assert.assertEquals("Memnsaje incorrecto, deber�a decir"+Mensajes.LOGIN_OK.getValor(),Mensajes.LOGIN_OK.getValor(),op.getMensaje());
-    }
+    //}
     
     @Test
     public void testRegistroOk()
@@ -105,8 +104,23 @@ public class TestDatos
         TestUtils.clickComponent(nombreReal, robot);
         TestUtils.tipeaTexto("Agustin", robot);
         TestUtils.clickComponent(Bregistrar2, robot);
+        
+        
+        //JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        //JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        //JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+
+        JTextField nombre1 = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+        
+        TestUtils.clickComponent(nombre1, robot);
+        TestUtils.tipeaTexto("Agus", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("Asd123", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
         cantidadactual = empresa.getClientes().size();
-        //verifico los resultados
+
         Assert.assertEquals("Deberia haber un elemento mas que antes", cantidad + 1, cantidadactual);
         //Assert.assertEquals("Mensaje incorrecto, deberia decir"+Mensajes.USUARIO_REGISTRADO.getValor(),Mensajes.USUARIO_REGISTRADO.getValor(),op.getMensaje());
     }
