@@ -1,8 +1,6 @@
 package testGUI;
 
-
-import vista.IOptionPane; // Para obtener el mensaje del option pane y comparar si es el correcto
-
+import vista.IOptionPane;
 
 public class FalsoOptionPane implements IOptionPane {
     private String mensaje = null;
@@ -13,10 +11,16 @@ public class FalsoOptionPane implements IOptionPane {
 
     @Override
     public void ShowMessage(String mensaje) {
-        this.mensaje = mensaje;
+        this.mensaje = mensaje; // Captura el mensaje mostrado
     }
 
+    // Devuelve el último mensaje capturado
     public String getMensaje() {
         return mensaje;
+    }
+
+    // Limpia el mensaje capturado (opcional, útil para asegurar que las pruebas no reutilicen mensajes previos)
+    public void clearMensaje() {
+        this.mensaje = null;
     }
 }

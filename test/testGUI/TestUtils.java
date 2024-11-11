@@ -93,21 +93,42 @@ public class TestUtils
      * @param robot Referencia al Robot que se utilizará
      */
     public static void tipeaTexto(String texto, Robot robot) {
-        String mayusculas = texto.toUpperCase();
-        char letras[] = mayusculas.toCharArray();
-        for (int i = 0; i < letras.length; i++)
-        {
+        for (char c : texto.toCharArray()) {
             robot.delay(getDelay());
-            if (texto.charAt(i) >= 'A' && texto.charAt(i) <= 'Z')
-                robot.keyPress(KeyEvent.VK_SHIFT);
-            robot.keyPress(letras[i]);
-            robot.delay(getDelay());
-            robot.keyRelease(letras[i]);
-            if (texto.charAt(i) >= 'A' && texto.charAt(i) <= 'Z')
-                robot.keyRelease(KeyEvent.VK_SHIFT);
 
+            // Obtener el código de tecla para el carácter
+            int keyCode = KeyEvent.getExtendedKeyCodeForChar(c);
+            
+            // Verificar si el código de tecla es válido o es un carácter especial no soportado
+            if (keyCode == KeyEvent.VK_UNDEFINED || keyCode > 255) {
+                System.err.println("Carácter no soportado por Robot y será omitido: " + c);
+                continue;  // Salta este carácter y pasa al siguiente
+            }
+
+            // Si es mayúscula, presionar Shift
+            if (Character.isUpperCase(c)) {
+                robot.keyPress(KeyEvent.VK_SHIFT);
+            }
+
+            // Presionar y soltar la tecla correspondiente en `keyCode`
+            try {
+                robot.keyPress(keyCode);
+                robot.keyRelease(keyCode);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Error al presionar la tecla: " + c + " con código: " + keyCode);
+                continue;  // Si ocurre un error, omitir el carácter
+            }
+
+            // Liberar Shift si fue presionado
+            if (Character.isUpperCase(c)) {
+                robot.keyRelease(KeyEvent.VK_SHIFT);
+            }
+
+            robot.delay(getDelay());
         }
     }
+
+
 
     /**
      * Borra el texto de un JTextField simulando el pulsado de la tecla 'Delete' utilizando la clase Robot
