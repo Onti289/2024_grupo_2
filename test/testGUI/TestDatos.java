@@ -15,13 +15,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import controlador.Controlador;
-import excepciones.ClienteConPedidoPendienteException;
-import excepciones.ClienteConViajePendienteException;
-import excepciones.ClienteNoExisteException;
-import excepciones.SinVehiculoParaPedidoException;
-import excepciones.UsuarioYaExisteException;
-import modeloDatos.Pedido;
-import modeloDatos.Vehiculo;
+import excepciones.*;
+import modeloDatos.*;
 import modeloNegocio.Empresa;
 import util.Constantes;
 import util.Mensajes;
@@ -55,9 +50,9 @@ public class TestDatos {
         ventana = new Ventana();
         controlador.setVista(ventana); // ERA ESTA LINEA
         ventana.setOptionPane(op);
-        Vehiculo vehiculo = new vehiculo("asd123",3,false);
-        //empresa.agregarVehiculo(vehiculo);
-        //Chofer chofer = new ChoferTemporario("")
+        Vehiculo vehiculo = new Auto("asd123",4,true);
+        empresa.agregarVehiculo(vehiculo);
+        Chofer chofer = new ChoferTemporario("riki","999");
         empresa.agregarChofer(chofer);
 		empresa.agregarCliente("Manu", "123456", "manuel");
 		empresa.agregarCliente("Lauti", "123456", "Lautaro");
@@ -405,4 +400,195 @@ public class TestDatos {
         Assert.assertTrue("El campo Valor Viaje debería estar vacío", valorViaje.getText().isEmpty());
     }
 
+    @Test
+    public void testCrearPedidoExitoso() {
+        robot.delay(TestUtils.getDelay());
+
+        // Loguear al usuario para acceder a la creación de pedidos
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("Manu", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("123456", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+
+        // Completar los campos necesarios para el pedido
+        JTextField cantPasajeros = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_PAX);
+        JTextField cantKm = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_KM);
+        JCheckBox checkMascota = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_MASCOTA);
+        JCheckBox checkBaul = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_BAUL);
+        JButton botonNuevoPedido = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_PEDIDO);
+
+        TestUtils.clickComponent(cantPasajeros, robot);
+        TestUtils.tipeaTexto("3", robot);  // Pasajeros entre 1 y 10
+        TestUtils.clickComponent(cantKm, robot);
+        TestUtils.tipeaTexto("5", robot);  // Kilómetros mayor o igual a 0
+        TestUtils.clickComponent(checkMascota, robot);  // Selección de opciones adicionales
+        TestUtils.clickComponent(checkBaul, robot);
+
+        // Verificar que el botón NUEVO_PEDIDO esté habilitado
+        Assert.assertTrue("El botón NUEVO_PEDIDO debería estar habilitado", botonNuevoPedido.isEnabled());
+
+        // Crear el pedido
+        TestUtils.clickComponent(botonNuevoPedido, robot);
+
+        // Verificar que los campos se borren después de crear el pedido
+        Assert.assertEquals("El campo CantPasajeros debería estar vacío después del pedido", "", cantPasajeros.getText());
+        Assert.assertEquals("El campo CantKm debería estar vacío después del pedido", "", cantKm.getText());
+    }
+
+    @Test
+    public void testCrearPedidoSinVehiculoDisponible() {
+        robot.delay(TestUtils.getDelay());
+
+        // Loguear al usuario
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("Manu", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("123456", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+
+        // Completar los campos del pedido para una configuración sin vehículo disponible
+        JTextField cantPasajeros = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_PAX);
+        JTextField cantKm = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_KM);
+        JCheckBox checkMascota = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_MASCOTA);
+        JCheckBox checkBaul = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_BAUL);
+        JButton botonNuevoPedido = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_PEDIDO);
+
+        TestUtils.clickComponent(cantPasajeros, robot);
+        TestUtils.tipeaTexto("5", robot);  // Configurar una cantidad de pasajeros que ningún vehículo puede soportar
+        TestUtils.clickComponent(cantKm, robot);
+        TestUtils.tipeaTexto("20", robot);  // Distancia suficiente para generar el pedido
+        TestUtils.clickComponent(checkMascota, robot);  // Opciones adicionales
+        TestUtils.clickComponent(checkBaul, robot);
+
+        // Intentar crear el pedido
+        TestUtils.clickComponent(botonNuevoPedido, robot);
+
+        // Verificar que se muestra el mensaje de error "Sin vehículo para pedido"
+        Assert.assertEquals("Debería mostrar el mensaje de error por falta de vehículo", Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor(), op.getMensaje());
+    }
+
+    @Test
+    public void testSeleccionZonaExclusiva() {
+        robot.delay(TestUtils.getDelay());
+
+        // Loguear al usuario
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("Manu", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("123456", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+
+        // Seleccionar cada zona y verificar exclusividad
+        JRadioButton ZonaStandard = (JRadioButton) TestUtils.getComponentForName(ventana, Constantes.ZONA_STANDARD);
+        JRadioButton ZonaSinAsfaltar = (JRadioButton) TestUtils.getComponentForName(ventana, Constantes.ZONA_SIN_ASFALTAR);
+        JRadioButton ZonaPeligrosa = (JRadioButton) TestUtils.getComponentForName(ventana, Constantes.ZONA_PELIGROSA);
+
+        TestUtils.clickComponent(ZonaStandard, robot);
+        Assert.assertTrue("La zona standard debería estar seleccionada", ZonaStandard.isSelected());
+        Assert.assertFalse("La zona sin asfaltar no debería estar seleccionada", ZonaSinAsfaltar.isSelected());
+        Assert.assertFalse("La zona peligrosa no debería estar seleccionada", ZonaPeligrosa.isSelected());
+
+        TestUtils.clickComponent(ZonaSinAsfaltar, robot);
+        Assert.assertFalse("La zona standard no debería estar seleccionada", ZonaStandard.isSelected());
+        Assert.assertTrue("La zona sin asfaltar debería estar seleccionada", ZonaSinAsfaltar.isSelected());
+        Assert.assertFalse("La zona peligrosa no debería estar seleccionada", ZonaPeligrosa.isSelected());
+
+        TestUtils.clickComponent(ZonaPeligrosa, robot);
+        Assert.assertFalse("La zona standard no debería estar seleccionada", ZonaStandard.isSelected());
+        Assert.assertFalse("La zona sin asfaltar no debería estar seleccionada", ZonaSinAsfaltar.isSelected());
+        Assert.assertTrue("La zona peligrosa debería estar seleccionada", ZonaPeligrosa.isSelected());
+    }
+    
+    @Test
+    public void testCrearPedidoConCamposIncompletos() {
+        robot.delay(TestUtils.getDelay());
+
+        // Loguear al usuario
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("Manu", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("123456", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+
+        // Obtener referencia al botón y verificar que esté deshabilitado cuando los campos están vacíos
+        JButton botonNuevoPedido = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_PEDIDO);
+        Assert.assertFalse("El botón NUEVO_PEDIDO debería estar deshabilitado con campos vacíos", botonNuevoPedido.isEnabled());
+
+        // Rellenar solo algunos campos y verificar que el botón sigue deshabilitado
+        JTextField cantKm = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_KM);
+        JCheckBox checkBaul = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_BAUL);
+
+        TestUtils.clickComponent(cantKm, robot);
+        TestUtils.tipeaTexto("150", robot);
+        TestUtils.clickComponent(checkBaul, robot);
+
+        Assert.assertFalse("El botón NUEVO_PEDIDO debería seguir deshabilitado con campos incompletos", botonNuevoPedido.isEnabled());
+    }
+
+    @Test
+    public void testFinalizarViajeYCalificarChofer() throws PedidoInexistenteException, ChoferNoDisponibleException, VehiculoNoDisponibleException, VehiculoNoValidoException, ClienteConViajePendienteException {
+        robot.delay(TestUtils.getDelay());
+        
+        Cliente cliente = empresa.getClientes().get("Lauti");
+        empresa.crearViaje(empresa.getPedidoDeCliente(cliente), empresa.getChoferes().get("999"), empresa.getVehiculos().get("asd123"));
+
+        // Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("Lauti", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("123456", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+
+        // Completar calificación para habilitar el botón CALIFICAR_PAGAR
+        JTextField calificacion = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_DE_VIAJE);
+        JButton botonCalificarPagar = (JButton) TestUtils.getComponentForName(ventana, Constantes.CALIFICAR_PAGAR);
+
+        TestUtils.clickComponent(calificacion, robot);
+        TestUtils.tipeaTexto("5", robot);  // Calificación válida entre 0 y 5
+
+        // Verificar que el botón CALIFICAR_PAGAR esté habilitado
+        Assert.assertTrue("El botón CALIFICAR_PAGAR debería estar habilitado con una calificación válida", botonCalificarPagar.isEnabled());
+
+        // Finalizar el viaje
+        TestUtils.clickComponent(botonCalificarPagar, robot);
+
+        // Verificar que el JTextArea PEDIDO_O_VIAJE_ACTUAL esté vacío
+        JTextArea pedidoOViajeActual = (JTextArea) TestUtils.getComponentForName(ventana, Constantes.PEDIDO_O_VIAJE_ACTUAL);
+        Assert.assertTrue("El JTextArea PEDIDO_O_VIAJE_ACTUAL debería estar vacío después de finalizar el viaje", pedidoOViajeActual.getText().isEmpty());
+
+        // Verificar que el viaje se haya agregado a la lista histórica LISTA_VIAJES_CLIENTE
+        javax.swing.JList<Viaje> listaViajesCliente = (javax.swing.JList<Viaje>) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_CLIENTE);
+        Assert.assertTrue("La lista de viajes históricos debería contener al menos un viaje", listaViajesCliente.getModel().getSize() > 0);
+
+        // Verificar que el campo CALIFICACION se borre después de finalizar
+        Assert.assertEquals("El campo CALIFICACION debería estar vacío después de finalizar el viaje", "", calificacion.getText());
+
+        // Confirmar que el panel esté en estado inicial (estado 1)
+        JPanel panelLogin = (JPanel) TestUtils.getComponentForName(ventana, Constantes.PANEL_LOGIN);
+        Assert.assertNotNull("Debería haberse regresado al panel de inicio de sesión (estado 1)", panelLogin);
+    }
+
+    
 }
