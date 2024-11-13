@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
@@ -52,14 +53,16 @@ public class TestDatos {
         ventana.setOptionPane(op);
         Vehiculo vehiculo = new Auto("asd123",4,true);
         empresa.agregarVehiculo(vehiculo);
-        Chofer chofer = new ChoferTemporario("riki","999");
+        Chofer chofer = new ChoferTemporario("999","riki");
         empresa.agregarChofer(chofer);
 		empresa.agregarCliente("Manu", "123456", "manuel");
 		empresa.agregarCliente("Lauti", "123456", "Lautaro");
 		empresa.agregarCliente("Luken", "123456", "Lucas");
         Pedido pedido = new Pedido(empresa.getClientes().get("Lauti"),2,false,false,2,Constantes.ZONA_STANDARD);
 		empresa.agregarPedido(pedido);
-
+		empresa.crearViaje(pedido, empresa.getChoferes().get("999"), empresa.getVehiculos().get("asd123"));
+		empresa.login("Lauti", "123456");
+		empresa.pagarYFinalizarViaje(5);
     }
 
     @After
@@ -617,22 +620,26 @@ public class TestDatos {
         // Completar los campos necesarios para el pedido
         JTextField cantPasajeros = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_PAX);
         JTextField cantKm = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_KM);
-
+        JButton aceptar = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_PEDIDO);
+        
         TestUtils.clickComponent(cantPasajeros, robot);
         TestUtils.tipeaTexto("2", robot);  // Pasajeros entre 1 y 10
         TestUtils.clickComponent(cantKm, robot);
         TestUtils.tipeaTexto("4", robot);  // Kilómetros mayor o igual a 0
-        
+        TestUtils.clickComponent(aceptar, robot);
         // admin crea el viaje
-        empresa.crearViaje(empresa.getPedidoDeCliente(empresa.getClientes().get("Manu")), empresa.getChoferes().get("999"), empresa.getVehiculos().get("asd123"));
-      
+        Cliente clienteActual = empresa.getClientes().get("Manu");
+        empresa.crearViaje(empresa.getPedidos().get(clienteActual), empresa.getChoferes().get("999"), empresa.getVehiculos().get("asd123"));
         // Completar calificación para habilitar el botón CALIFICAR_PAGAR
         JTextField calificacion = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_DE_VIAJE);
         JButton botonCalificarPagar = (JButton) TestUtils.getComponentForName(ventana, Constantes.CALIFICAR_PAGAR);
 
         TestUtils.clickComponent(calificacion, robot);
         TestUtils.tipeaTexto("5", robot);  // Calificación válida entre 0 y 5
-
+        robot.delay(5000);
+        
+        // El campo de calificación debe estar disponible
+        Assert.assertTrue("El campo de calificación debería estar disponible", calificacion.isEnabled());
         // Verificar que el botón CALIFICAR_PAGAR esté habilitado
         Assert.assertTrue("El botón CALIFICAR_PAGAR debería estar habilitado con una calificación válida", botonCalificarPagar.isEnabled());
 
@@ -656,4 +663,39 @@ public class TestDatos {
     }
 
     
-}
+    // ADMIN
+    //VISUALIZACIÓN DE INFORMACIÓN
+    @Test
+    public void testAdminSeleccionaChofer() throws ClienteSinViajePendienteException {
+    	// PAGO UN VIAJE PARA QUE APAREZCA EL HISTORIAL DE ESE CHOFER
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+        
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+        JList choferes = (JList)  TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_TOTALES);
+        choferes.setSelectedIndex(0);
+        
+        JList viajesChofer = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_DE_CHOFER);
+        
+        // Verifica que la lista no esté vacía
+        Assert.assertTrue("La lista de viajes debería tener al menos un viaje", viajesChofer.getModel().getSize() > 0);
+
+        // Verifica que los elementos de la lista sean de tipo Viaje
+        for (int i = 0; i < viajesChofer.getModel().getSize(); i++) {
+            Object viaje = viajesChofer.getModel().getElementAt(i);
+            Assert.assertTrue("Cada elemento debe ser de tipo Viaje", viaje instanceof Viaje);
+        }
+    }
+}    
+    
