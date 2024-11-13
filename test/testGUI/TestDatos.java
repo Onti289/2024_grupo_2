@@ -666,7 +666,45 @@ public class TestDatos {
     // ADMIN
     //VISUALIZACIÓN DE INFORMACIÓN
     @Test
-    public void testAdminSeleccionaChofer() throws ClienteSinViajePendienteException {
+    public void testAdminSeleccionaChofer() throws SinViajesException{
+    	// PAGO UN VIAJE PARA QUE APAREZCA EL HISTORIAL DE ESE CHOFER
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+        
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+        JList choferes = (JList)  TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_TOTALES);
+        choferes.setSelectedIndex(0);
+        
+        JList viajesChofer = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_DE_CHOFER);
+        
+        JTextField CalificacionChofer = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_CHOFER);
+        // Debe contener la calificacion de ese chofer
+        Assert.assertEquals("La calificación del chofer no es correcta", empresa.calificacionDeChofer(empresa.getChoferes().get("999")), Double.parseDouble(CalificacionChofer.getText()), 0.01);
+        // Verifica que la lista no esté vacía
+        Assert.assertTrue("La lista de viajes debería tener al menos un viaje", viajesChofer.getModel().getSize() > 0);
+
+        // Verifica que los elementos de la lista sean de tipo Viaje
+        for (int i = 0; i < viajesChofer.getModel().getSize(); i++) {
+            Object viaje = viajesChofer.getModel().getElementAt(i);
+            Assert.assertTrue("Cada elemento debe ser de tipo Viaje", viaje instanceof Viaje);
+         
+      
+        }
+    }
+
+    @Test
+    public void testAdminSeleccionaChofr(){
     	// PAGO UN VIAJE PARA QUE APAREZCA EL HISTORIAL DE ESE CHOFER
     	
     	// Obtener componentes de Login
@@ -697,5 +735,9 @@ public class TestDatos {
             Assert.assertTrue("Cada elemento debe ser de tipo Viaje", viaje instanceof Viaje);
         }
     }
+
+
 }    
+
+
     
