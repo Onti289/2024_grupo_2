@@ -58,9 +58,13 @@ public class TestDatos {
         empresa.agregarVehiculo(vehiculo);
         vehiculo = new Auto("ccc444",4,true);
         empresa.agregarVehiculo(vehiculo);
+        vehiculo = new Auto("abc123",4,true);
+        empresa.agregarVehiculo(vehiculo);
         Chofer chofer = new ChoferTemporario("999","riki");
         empresa.agregarChofer(chofer);
         chofer = new ChoferTemporario("888","rikon");
+        empresa.agregarChofer(chofer);
+        chofer = new ChoferTemporario("678","Guille");
         empresa.agregarChofer(chofer);
 		empresa.agregarCliente("Manu", "123456", "manuel");
 		empresa.agregarCliente("Lauti", "123456", "Lautaro");
@@ -70,6 +74,10 @@ public class TestDatos {
 		empresa.crearViaje(pedido, empresa.getChoferes().get("999"), empresa.getVehiculos().get("asd123"));
 		empresa.login("Lauti", "123456");
 		empresa.pagarYFinalizarViaje(5);
+		
+		Pedido pedido2 = new Pedido(empresa.getClientes().get("Luken"),2,false,false,2,Constantes.ZONA_STANDARD);
+		empresa.agregarPedido(pedido2);
+		empresa.crearViaje(pedido2, empresa.getChoferes().get("678"), empresa.getVehiculos().get("abc123"));
     }
 
     @After
@@ -619,31 +627,17 @@ public class TestDatos {
 
         // Llenar los campos para un login correcto
         TestUtils.clickComponent(nombre, robot);
-        TestUtils.tipeaTexto("Manu", robot);
+        TestUtils.tipeaTexto("Luken", robot);
         TestUtils.clickComponent(contrasena, robot);
         TestUtils.tipeaTexto("123456", robot);
         TestUtils.clickComponent(aceptarLog, robot);
 
-        // Completar los campos necesarios para el pedido
-        JTextField cantPasajeros = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_PAX);
-        JTextField cantKm = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANT_KM);
-        JButton aceptar = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_PEDIDO);
-        
-        TestUtils.clickComponent(cantPasajeros, robot);
-        TestUtils.tipeaTexto("2", robot);  // Pasajeros entre 1 y 10
-        TestUtils.clickComponent(cantKm, robot);
-        TestUtils.tipeaTexto("4", robot);  // Kilómetros mayor o igual a 0
-        TestUtils.clickComponent(aceptar, robot);
-        // admin crea el viaje
-        Cliente clienteActual = empresa.getClientes().get("Manu");
-        empresa.crearViaje(empresa.getPedidos().get(clienteActual), empresa.getChoferes().get("888"), empresa.getVehiculos().get("ccc444"));
         // Completar calificación para habilitar el botón CALIFICAR_PAGAR
         JTextField calificacion = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_DE_VIAJE);
         JButton botonCalificarPagar = (JButton) TestUtils.getComponentForName(ventana, Constantes.CALIFICAR_PAGAR);
 
         TestUtils.clickComponent(calificacion, robot);
         TestUtils.tipeaTexto("5", robot);  // Calificación válida entre 0 y 5
-        robot.delay(3000);
         
         // El campo de calificación debe estar disponible
         Assert.assertTrue("El campo de calificación debería estar disponible", calificacion.isEnabled());
