@@ -1,7 +1,5 @@
 package testGUI;
 
-import static org.junit.Assert.assertTrue;
-
 import java.awt.AWTException;
 import java.awt.Robot;
 import javax.swing.JButton;
@@ -131,8 +129,7 @@ public class TestDatos {
         TestUtils.clickComponent(aceptarLog, robot);
 
         robot.delay(1000);
-        
-        
+               
         Assert.assertEquals("Mensaje incorrecto", Mensajes.USUARIO_DESCONOCIDO.getValor(), op.getMensaje());
     }
 
@@ -210,6 +207,7 @@ public class TestDatos {
         JPanel panelLogin = (JPanel) TestUtils.getComponentForName(ventana, Constantes.PANEL_LOGIN);
         Assert.assertNotNull("El panel Cliente no se desplegó correctamente", panelLogin);
     }
+    
     @Test
     public void testRegistroCancelarHabilitado() {
     	robot.delay(TestUtils.getDelay());
@@ -217,13 +215,14 @@ public class TestDatos {
         TestUtils.clickComponent(BRegistrar, robot);
         JButton BCancelar = (JButton) TestUtils.getComponentForName(ventana, Constantes.REG_BUTTON_CANCELAR);
         
-        robot.delay(TestUtils.getDelay());
+        robot.delay(2000);
         TestUtils.clickComponent(BCancelar, robot);
 
-     // Verificar si el panel 'Panel_Login' ha sido añadido a la ventana
+        // Verificar si el panel 'Panel_Login' ha sido añadido a la ventana
         JPanel panelLogin = (JPanel) TestUtils.getComponentForName(ventana, Constantes.PANEL_LOGIN);
         Assert.assertNotNull("El panel Cliente no se desplegó correctamente", panelLogin);
     }
+    
     @Test
     public void testRegistroRepetido() {
 
@@ -289,6 +288,7 @@ public class TestDatos {
         // Verificar que se muestre el mensaje "Pass no coincide"
         Assert.assertEquals("Contraseña incorrecta", Mensajes.PASS_NO_COINCIDE.getValor(), op.getMensaje());
     }
+    
     // PANEL CLIENTE
     @Test
     public void testTituloPanelCliente(){
@@ -309,9 +309,9 @@ public class TestDatos {
         // Verifico si el titulo del panel del cliente es el nombre del cliente logueado
         JPanel panelCliente = (JPanel) TestUtils.getComponentForName(ventana, Constantes.PANEL_CLIENTE);
         TitledBorder borderTituloCliente = (TitledBorder) panelCliente.getBorder();
-        Assert.assertEquals("manuel", borderTituloCliente.getTitle());
-    	
+        Assert.assertEquals("manuel", borderTituloCliente.getTitle());    	
     }
+    
     @Test
     public void testCerrarSesionBotonHabilitado(){
     	robot.delay(TestUtils.getDelay());
@@ -333,8 +333,8 @@ public class TestDatos {
        // Verificar si el panel 'Panel_Login' ha sido añadido a la ventana
           JPanel panelLogin = (JPanel) TestUtils.getComponentForName(ventana, Constantes.PANEL_LOGIN);
           Assert.assertNotNull("El panel Cliente no se desplegó correctamente", panelLogin);
-    	
     }
+    
     @Test
     public void testSinPedidoNiViajes(){
     	robot.delay(TestUtils.getDelay());
@@ -380,6 +380,7 @@ public class TestDatos {
         Assert.assertTrue("El campo Valor Viaje debería estar vacío", valorViaje.getText().isEmpty());
     	
     }
+    
     @Test
     public void testConPedido() {
 
@@ -1076,6 +1077,3 @@ public class TestDatos {
     }
 
 }    
-
-
-    

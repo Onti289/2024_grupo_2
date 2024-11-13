@@ -45,7 +45,7 @@ public class TestVehiculoNoDisponibleException {
         auto1 = new Auto("123", 4, true);
         empresa.agregarVehiculo(auto1);
         auto2 = new Auto("321", 4, true);
-        empresa.agregarVehiculo(auto1);
+        empresa.agregarVehiculo(auto2);
 	}
 
 	@After

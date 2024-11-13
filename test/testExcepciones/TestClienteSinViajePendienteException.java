@@ -10,7 +10,6 @@ import excepciones.ClienteSinViajePendienteException;
 import modeloDatos.Auto;
 import modeloDatos.Chofer;
 import modeloDatos.ChoferTemporario;
-import modeloDatos.Cliente;
 import modeloNegocio.Empresa;
 
 public class TestClienteSinViajePendienteException {
@@ -18,12 +17,11 @@ public class TestClienteSinViajePendienteException {
     private Empresa empresa;
     private Chofer chofer1;
     private Auto auto1;
-    private Cliente cliente;    
+    
     @Before
 	public void setUp() throws Exception {
 		empresa = Empresa.getInstance();
         empresa.agregarCliente("Lauta", "***", "Lautaro");
-        cliente = empresa.getClientes().get("Lauta");
         chofer1 = new ChoferTemporario("111", "Messi");
         empresa.agregarChofer(chofer1);
         auto1 = new Auto("123", 4, true);

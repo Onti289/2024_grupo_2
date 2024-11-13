@@ -1,18 +1,8 @@
 package testGUI;
 
-import static org.junit.Assert.assertTrue;
-
 import java.awt.AWTException;
 import java.awt.Robot;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.swing.border.TitledBorder;
+import javax.swing.*;
 
 import org.junit.After;
 import org.junit.Assert;

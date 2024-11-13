@@ -176,9 +176,6 @@ public class TestEmpresa {
 		}
 		
 		// CASO 1
-		
-		Cliente cliente = new Cliente("agus","1234","agustin");
-
 		try {
 			empresa.agregarCliente("agus", "1234", "agustin");
 		} catch (UsuarioYaExisteException e) {
@@ -221,9 +218,6 @@ public class TestEmpresa {
 		}
 		
 		// CASO 3
-		
-		Cliente cliente3 = new Cliente("Manu","1234","Manuel");
-
 		try {
 			empresa.agregarCliente("Manu", "1234", "Manuel");
 		} catch (UsuarioYaExisteException e) {

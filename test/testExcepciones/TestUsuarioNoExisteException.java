@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import excepciones.ClienteSinViajePendienteException;
 import excepciones.PasswordErroneaException;
 import excepciones.UsuarioNoExisteException;
 import modeloNegocio.Empresa;
