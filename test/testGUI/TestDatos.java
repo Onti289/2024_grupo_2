@@ -1,5 +1,7 @@
 package testGUI;
 
+import static org.junit.Assert.assertTrue;
+
 import java.awt.AWTException;
 import java.awt.Robot;
 import javax.swing.JButton;
@@ -9,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.border.TitledBorder;
 
 import org.junit.After;
@@ -664,17 +667,16 @@ public class TestDatos {
 
     
     // ADMIN
+    
     //VISUALIZACIÓN DE INFORMACIÓN
     @Test
     public void testAdminSeleccionaChofer() throws SinViajesException{
-    	// PAGO UN VIAJE PARA QUE APAREZCA EL HISTORIAL DE ESE CHOFER
     	
     	// Obtener componentes de Login
         JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
         JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
         JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
   
-        
 
         // Llenar los campos para un login correcto
         TestUtils.clickComponent(nombre, robot);
@@ -684,16 +686,20 @@ public class TestDatos {
         TestUtils.clickComponent(aceptarLog, robot);
         
         JList choferes = (JList)  TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_TOTALES);
-        choferes.setSelectedIndex(0);
+        choferes.setSelectedIndex(1);
         
         JList viajesChofer = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_DE_CHOFER);
         
+        
         JTextField CalificacionChofer = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_CHOFER);
+        JTextField SueldoChofer = (JTextField) TestUtils.getComponentForName(ventana, Constantes.SUELDO_DE_CHOFER);
         // Debe contener la calificacion de ese chofer
         Assert.assertEquals("La calificación del chofer no es correcta", empresa.calificacionDeChofer(empresa.getChoferes().get("999")), Double.parseDouble(CalificacionChofer.getText()), 0.01);
+        // Debe contener el sueldo de ese chofer
+        Assert.assertEquals("El sueldo del chofer no es correcto", empresa.getChoferes().get("999").getSueldoNeto(), Double.parseDouble(SueldoChofer.getText().replace(",", ".")), 0.01);
         // Verifica que la lista no esté vacía
         Assert.assertTrue("La lista de viajes debería tener al menos un viaje", viajesChofer.getModel().getSize() > 0);
-
+        
         // Verifica que los elementos de la lista sean de tipo Viaje
         for (int i = 0; i < viajesChofer.getModel().getSize(); i++) {
             Object viaje = viajesChofer.getModel().getElementAt(i);
@@ -704,8 +710,7 @@ public class TestDatos {
     }
 
     @Test
-    public void testAdminSeleccionaChofr(){
-    	// PAGO UN VIAJE PARA QUE APAREZCA EL HISTORIAL DE ESE CHOFER
+    public void testAdminNoSeleccionaChofer(){
     	
     	// Obtener componentes de Login
         JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
@@ -721,22 +726,152 @@ public class TestDatos {
         TestUtils.tipeaTexto("admin", robot);
         TestUtils.clickComponent(aceptarLog, robot);
         
-        JList choferes = (JList)  TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_TOTALES);
-        choferes.setSelectedIndex(0);
-        
-        JList viajesChofer = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_DE_CHOFER);
-        
-        // Verifica que la lista no esté vacía
-        Assert.assertTrue("La lista de viajes debería tener al menos un viaje", viajesChofer.getModel().getSize() > 0);
+        JList listaViajesDeChofer = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_DE_CHOFER);
+        Assert.assertEquals("La lista de viajes del chofer debería estar vacía", 0, listaViajesDeChofer.getModel().getSize());
 
-        // Verifica que los elementos de la lista sean de tipo Viaje
-        for (int i = 0; i < viajesChofer.getModel().getSize(); i++) {
-            Object viaje = viajesChofer.getModel().getElementAt(i);
-            Assert.assertTrue("Cada elemento debe ser de tipo Viaje", viaje instanceof Viaje);
-        }
+        // Verifica que el TextField de calificación del chofer esté vacío
+        JTextField calificacionChofer = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_CHOFER);
+        Assert.assertTrue("El campo de calificación del chofer debería estar vacío", calificacionChofer.getText().isEmpty());
+
+        // Verifica que el TextField de sueldo del chofer esté vacío
+        JTextField sueldoChofer = (JTextField) TestUtils.getComponentForName(ventana, Constantes.SUELDO_DE_CHOFER);
+        Assert.assertTrue("El campo de sueldo del chofer debería estar vacío", sueldoChofer.getText().isEmpty());
     }
 
+    @Test
+    public void testAdminOtrosComponentes(){
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+        
 
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+     // Verificar que la JList LISTADO_DE_CLIENTES contiene objetos de tipo Cliente
+        JList listadoDeClientes = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTADO_DE_CLIENTES);
+        ListModel clientesModel = listadoDeClientes.getModel();
+        for (int i = 0; i < clientesModel.getSize(); i++) {
+            Assert.assertTrue("Cada elemento debe ser de tipo Cliente", clientesModel.getElementAt(i) instanceof Cliente);
+        }
+
+        // Verificar que la JList LISTA_VEHICULOS_TOTALES contiene objetos de tipo Vehiculo
+        JList listaVehiculosTotales = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VEHICULOS_TOTALES);
+        ListModel vehiculosModel = listaVehiculosTotales.getModel();
+        for (int i = 0; i < vehiculosModel.getSize(); i++) {
+            Assert.assertTrue("Cada elemento debe ser de tipo Vehiculo", vehiculosModel.getElementAt(i) instanceof Vehiculo);
+        }
+
+        // Verificar que la JList LISTA_VIAJES_HISTORICOS contiene objetos de tipo Viaje
+        JList listaViajesHistoricos = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VIAJES_HISTORICOS);
+        ListModel viajesModel = listaViajesHistoricos.getModel();
+        for (int i = 0; i < viajesModel.getSize(); i++) {
+            Assert.assertTrue("Cada elemento debe ser de tipo Viaje", viajesModel.getElementAt(i) instanceof Viaje);
+        }
+
+        // Verificar que el TextField TOTAL_SUELDOS_A_PAGAR muestra un valor numérico
+        JTextField totalSueldosAPagar = (JTextField) TestUtils.getComponentForName(ventana, Constantes.TOTAL_SUELDOS_A_PAGAR);
+        Assert.assertEquals("El campo de total de sueldos a pagar debería mostrar un valor correcto", empresa.getTotalSalarios(), Double.parseDouble(totalSueldosAPagar.getText().replace(",", ".")), 0.01);
+
+        }
+    
+    
+    // Registro de un nuevo chofer
+    @Test
+    public void testRegistrarChoferNuevo() {
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+        // Configurar los campos con un DNI no registrado
+        JTextField dniField = (JTextField) TestUtils.getComponentForName(ventana, Constantes.DNI_CHOFER);
+        JTextField nombreField = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_CHOFER);
+        JTextField cantHijos = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CH_CANT_HIJOS);
+        JTextField anioIngreso = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CH_ANIO);
+        JButton nuevoChoferButton = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_CHOFER);
+
+        TestUtils.clickComponent(nuevoChoferButton, robot);
+        TestUtils.clickComponent(dniField, robot);
+        TestUtils.tipeaTexto("111", robot);  // DNI no registrado
+        TestUtils.clickComponent(nombreField, robot);
+        TestUtils.tipeaTexto("Edgardo", robot);
+        TestUtils.clickComponent(cantHijos, robot);
+        TestUtils.tipeaTexto("2", robot);  
+        TestUtils.clickComponent(anioIngreso, robot);
+        TestUtils.tipeaTexto("2020", robot);  
+        TestUtils.clickComponent(nuevoChoferButton, robot);
+        
+        robot.delay(10000);
+        // Verificar que el chofer se agregó a la lista
+        JList listaChoferes = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_TOTALES);
+        ListModel choferesModel = listaChoferes.getModel();
+        boolean choferEncontrado = false;
+        for (int i = 0; i < choferesModel.getSize(); i++) {
+            if (((Chofer) choferesModel.getElementAt(i)).getDni().equals("111")) {
+                choferEncontrado = true;
+            }
+        }
+        Assert.assertTrue("El chofer debería estar registrado en la lista", choferEncontrado);
+
+        // Verificar que los campos de texto están vacíos
+        Assert.assertTrue("El campo DNI debería estar vacío", dniField.getText().isEmpty());
+        Assert.assertTrue("El campo Nombre debería estar vacío", nombreField.getText().isEmpty());
+    }
+
+    @Test
+    public void testRegistrarChoferDNIExistente() {
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+        // Configurar los campos con un DNI no registrado
+        JTextField dniField = (JTextField) TestUtils.getComponentForName(ventana, Constantes.DNI_CHOFER);
+        JTextField nombreField = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_CHOFER);
+        JTextField cantHijos = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CH_CANT_HIJOS);
+        JTextField anioIngreso = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CH_ANIO);
+        JButton nuevoChoferButton = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_CHOFER);
+
+        TestUtils.clickComponent(nuevoChoferButton, robot);
+        TestUtils.clickComponent(dniField, robot);
+        TestUtils.tipeaTexto("999", robot);  // DNI no registrado
+        TestUtils.clickComponent(nombreField, robot);
+        TestUtils.tipeaTexto("Gustavo", robot);
+        TestUtils.clickComponent(cantHijos, robot);
+        TestUtils.tipeaTexto("3", robot);  
+        TestUtils.clickComponent(anioIngreso, robot);
+        TestUtils.tipeaTexto("2021", robot);  
+        TestUtils.clickComponent(nuevoChoferButton, robot);
+
+        robot.delay(10000);
+        // Verificar que el mensaje de "CHOFER_YA_REGISTRADO" se muestra
+        Assert.assertEquals("Mensaje incorrecto", Mensajes.CHOFER_YA_REGISTRADO.getValor(), op.getMensaje());
+    }
 }    
 
 
