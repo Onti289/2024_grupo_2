@@ -55,11 +55,13 @@ public class TestDatos {
         controlador.setVista(ventana); // ERA ESTA LINEA
         ventana.setOptionPane(op);
         Vehiculo vehiculo = new Auto("asd123",4,true);
+        Vehiculo vehiculo2;
+        Vehiculo vehiculo3;
         empresa.agregarVehiculo(vehiculo);
-        vehiculo = new Auto("ccc444",4,true);
-        empresa.agregarVehiculo(vehiculo);
-        vehiculo = new Auto("abc123",4,true);
-        empresa.agregarVehiculo(vehiculo);
+        vehiculo2 = new Auto("ccc444",4,true);
+        empresa.agregarVehiculo(vehiculo2);
+        vehiculo3 = new Auto("abc123",4,true);
+        empresa.agregarVehiculo(vehiculo3);
         Chofer chofer = new ChoferTemporario("999","riki");
         empresa.agregarChofer(chofer);
         chofer = new ChoferTemporario("888","rikon");
@@ -78,6 +80,11 @@ public class TestDatos {
 		Pedido pedido2 = new Pedido(empresa.getClientes().get("Luken"),2,false,false,2,Constantes.ZONA_STANDARD);
 		empresa.agregarPedido(pedido2);
 		empresa.crearViaje(pedido2, empresa.getChoferes().get("678"), empresa.getVehiculos().get("abc123"));
+		
+		// Pedido sin crear viaje
+		Pedido pedido3 = new Pedido(empresa.getClientes().get("Manu"),2,false,false,2,Constantes.ZONA_STANDARD);
+		empresa.agregarPedido(pedido3);
+
     }
 
     @After
@@ -733,7 +740,7 @@ public class TestDatos {
     }
 
     @Test
-    public void testAdminOtrosComponentes(){
+    public void testAdminOtrosComponentesChofer(){
     	
     	// Obtener componentes de Login
         JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
@@ -812,7 +819,6 @@ public class TestDatos {
         TestUtils.tipeaTexto("2020", robot);  
         TestUtils.clickComponent(nuevoChoferButton, robot);
         
-        robot.delay(10000);
         // Verificar que el chofer se agregó a la lista
         JList listaChoferes = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_TOTALES);
         ListModel choferesModel = listaChoferes.getModel();
@@ -853,7 +859,7 @@ public class TestDatos {
 
         TestUtils.clickComponent(nuevoChoferButton, robot);
         TestUtils.clickComponent(dniField, robot);
-        TestUtils.tipeaTexto("999", robot);  // DNI no registrado
+        TestUtils.tipeaTexto("999", robot);  // DNI ya existente
         TestUtils.clickComponent(nombreField, robot);
         TestUtils.tipeaTexto("Gustavo", robot);
         TestUtils.clickComponent(cantHijos, robot);
@@ -862,10 +868,213 @@ public class TestDatos {
         TestUtils.tipeaTexto("2021", robot);  
         TestUtils.clickComponent(nuevoChoferButton, robot);
 
-        robot.delay(10000);
         // Verificar que el mensaje de "CHOFER_YA_REGISTRADO" se muestra
         Assert.assertEquals("Mensaje incorrecto", Mensajes.CHOFER_YA_REGISTRADO.getValor(), op.getMensaje());
     }
+    
+    // Registro de un nuevo vehiculo
+    @Test
+    public void testRegistrarVehiculo() {
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+    	// Obtener componentes de Login
+        JTextField patente = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PATENTE);
+        JTextField cantPlazas = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANTIDAD_PLAZAS);
+        JRadioButton combi = (JRadioButton) TestUtils.getComponentForName(ventana, Constantes.COMBI);
+        JButton nuevoVehiculo = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_VEHICULO);
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(combi, robot);
+        TestUtils.clickComponent(patente, robot);
+        TestUtils.tipeaTexto("JJJ333", robot);
+        TestUtils.clickComponent(cantPlazas, robot);
+        TestUtils.tipeaTexto("6", robot);
+        TestUtils.clickComponent(nuevoVehiculo, robot);
+
+        
+        // Verificar que el vehiculo se agregó a la lista
+        
+        JList listaVehiculos = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VEHICULOS_TOTALES);
+        ListModel vehiculoModel = listaVehiculos.getModel();
+        boolean VehiculoEncontrado = false;
+        for (int i = 0; i < vehiculoModel.getSize(); i++) {
+            if (((Vehiculo) vehiculoModel.getElementAt(i)).getPatente().equals("JJJ333")) {
+                VehiculoEncontrado = true;
+            }
+        }
+        Assert.assertTrue("El vehiculo debería estar registrado en la lista", VehiculoEncontrado);
+
+        // Verificar que los campos de texto están vacíos
+        Assert.assertTrue("El campo patente debería estar vacío", patente.getText().isEmpty());
+        Assert.assertTrue("El campo Cantidad plazas debería estar vacío", cantPlazas.getText().isEmpty());
+    }
+    
+    @Test
+    public void testRegistrarVehiculoRepetido() {
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+    	// Obtener componentes de Login
+        JTextField patente = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PATENTE);
+        JTextField cantPlazas = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CANTIDAD_PLAZAS);
+        JRadioButton combi = (JRadioButton) TestUtils.getComponentForName(ventana, Constantes.COMBI);
+        JButton nuevoVehiculo = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_VEHICULO);
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(combi, robot);
+        TestUtils.clickComponent(patente, robot);
+        TestUtils.tipeaTexto("asd123", robot);
+        TestUtils.clickComponent(cantPlazas, robot);
+        TestUtils.tipeaTexto("6", robot);
+        TestUtils.clickComponent(nuevoVehiculo, robot);
+        
+     // Verificar que el mensaje de "Vehiculo_Ya_Registrado" se muestra
+        Assert.assertEquals("Mensaje incorrecto", Mensajes.VEHICULO_YA_REGISTRADO.getValor(), op.getMensaje());
+        
+        
+    }
+    
+    // Gestion de pedidos
+    @Test
+    public void testAdminOtrosComponentesPedidos(){
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+        
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+     // Verificar que la JList LISTA_PEDIDOS_PENDIENTES contiene objetos de tipo Pedido
+        JList listadoDePedidos = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_PEDIDOS_PENDIENTES);
+        ListModel pedidosModel = listadoDePedidos.getModel();
+        for (int i = 0; i < pedidosModel.getSize(); i++) {
+            Assert.assertTrue("Cada elemento debe ser de tipo pedido", pedidosModel.getElementAt(i) instanceof Pedido);
+        }
+
+        // Verificar que la JList LISTA_CHOFERES_LIBRES contiene objetos de tipo Chofer
+        JList listaChoferesLibresTotales = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_LIBRES);
+        ListModel choferesLibresModel = listaChoferesLibresTotales.getModel();
+        for (int i = 0; i < choferesLibresModel.getSize(); i++) {
+            Assert.assertTrue("Cada elemento debe ser de tipo chofer", choferesLibresModel.getElementAt(i) instanceof Chofer);
+        }
+
+        JList listaVehiculosDisponibles = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VEHICULOS_DISPONIBLES);
+        ListModel VehiculosDisponiblesModel = listaVehiculosDisponibles.getModel();
+        Assert.assertEquals("La lista de vehiculos disponibles deberia estar vacia antes de seleccionar un pedido",0,VehiculosDisponiblesModel.getSize());
+        
+        listadoDePedidos.setSelectedIndex(0);
+     // Verificar que la JList LISTA_VEHICULOS_DISPONIBLES contiene objetos de tipo Vehiculo AL SELECCIONAR PEDIDO
+        listaVehiculosDisponibles = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VEHICULOS_DISPONIBLES);
+        VehiculosDisponiblesModel = listaVehiculosDisponibles.getModel();
+        for (int i = 0; i < VehiculosDisponiblesModel.getSize(); i++) {
+            Assert.assertTrue("Cada elemento debe ser de tipo vehiculo", VehiculosDisponiblesModel.getElementAt(i) instanceof Vehiculo);
+        }
+        
+        listaChoferesLibresTotales.setSelectedIndex(0);
+        
+        listaVehiculosDisponibles.setSelectedIndex(0);
+        
+        
+     // Verificar que el botón NUEVO_VIAJE esté habilitado
+        JButton botonNuevoViaje = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_VIAJE);
+        Assert.assertTrue("El botón NUEVO_VIAJE debería estar habilitado", botonNuevoViaje.isEnabled());
+        
+       }
+
+    @Test
+    public void testNuevoViaje(){
+    	
+    	// Obtener componentes de Login
+        JTextField nombre = (JTextField) TestUtils.getComponentForName(ventana, Constantes.NOMBRE_USUARIO);
+        JTextField contrasena = (JTextField) TestUtils.getComponentForName(ventana, Constantes.PASSWORD);
+        JButton aceptarLog = (JButton) TestUtils.getComponentForName(ventana, Constantes.LOGIN);
+  
+        
+
+        // Llenar los campos para un login correcto
+        TestUtils.clickComponent(nombre, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(contrasena, robot);
+        TestUtils.tipeaTexto("admin", robot);
+        TestUtils.clickComponent(aceptarLog, robot);
+        
+        JList listadoDePedidos = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_PEDIDOS_PENDIENTES);
+        JList listaChoferesLibresTotales = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_CHOFERES_LIBRES);
+        JList listaVehiculosDisponibles = (JList) TestUtils.getComponentForName(ventana, Constantes.LISTA_VEHICULOS_DISPONIBLES);
+
+        listadoDePedidos.setSelectedIndex(0);
+        listaChoferesLibresTotales.setSelectedIndex(0);
+        listaVehiculosDisponibles.setSelectedIndex(0);
+        
+        
+     // Verificar que el botón NUEVO_VIAJE esté habilitado
+        JButton botonNuevoViaje = (JButton) TestUtils.getComponentForName(ventana, Constantes.NUEVO_VIAJE);
+        TestUtils.clickComponent(botonNuevoViaje, robot);
+        
+        
+        // Pedido, chofer y vehiculo seleccionados no deben aparecer más en las listas
+        
+        boolean pedidoUsadoEncontrado = false;
+        ListModel pedidosModel = listadoDePedidos.getModel();
+        for (int i = 0; i < pedidosModel.getSize(); i++) {
+            if (((Pedido) pedidosModel.getElementAt(i)).getCliente().equals(empresa.getClientes().get("Manu"))) {
+            	pedidoUsadoEncontrado = true;
+            }
+        }
+
+        boolean choferUsadoEncontrado = false;
+        ListModel choferesLibresModel = listaChoferesLibresTotales.getModel();
+        for (int i = 0; i < choferesLibresModel.getSize(); i++) {
+            if (((Chofer) choferesLibresModel.getElementAt(i)).getDni().equals("888")) {
+            	choferUsadoEncontrado = true;
+            }
+        }
+
+        boolean vehiculoUsadoEncontrado = false;
+        ListModel VehiculosDisponiblesModel = listaVehiculosDisponibles.getModel();
+        for (int i = 0; i < VehiculosDisponiblesModel.getSize(); i++) {
+            if (((Vehiculo) VehiculosDisponiblesModel.getElementAt(i)).getPatente().equals("ccc444")) {
+            	vehiculoUsadoEncontrado = true;
+            }
+        }
+        
+        Assert.assertFalse("El chofer debería estar registrado en la lista", pedidoUsadoEncontrado);
+        Assert.assertFalse("El chofer debería estar registrado en la lista", choferUsadoEncontrado);
+        Assert.assertFalse("El chofer debería estar registrado en la lista", vehiculoUsadoEncontrado);
+
+    }
+
 }    
 
 
