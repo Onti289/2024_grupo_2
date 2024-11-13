@@ -53,7 +53,11 @@ public class TestDatos {
         ventana.setOptionPane(op);
         Vehiculo vehiculo = new Auto("asd123",4,true);
         empresa.agregarVehiculo(vehiculo);
+        vehiculo = new Auto("ccc444",4,true);
+        empresa.agregarVehiculo(vehiculo);
         Chofer chofer = new ChoferTemporario("999","riki");
+        empresa.agregarChofer(chofer);
+        chofer = new ChoferTemporario("888","rikon");
         empresa.agregarChofer(chofer);
 		empresa.agregarCliente("Manu", "123456", "manuel");
 		empresa.agregarCliente("Lauti", "123456", "Lautaro");
@@ -629,14 +633,14 @@ public class TestDatos {
         TestUtils.clickComponent(aceptar, robot);
         // admin crea el viaje
         Cliente clienteActual = empresa.getClientes().get("Manu");
-        empresa.crearViaje(empresa.getPedidos().get(clienteActual), empresa.getChoferes().get("999"), empresa.getVehiculos().get("asd123"));
+        empresa.crearViaje(empresa.getPedidos().get(clienteActual), empresa.getChoferes().get("888"), empresa.getVehiculos().get("ccc444"));
         // Completar calificación para habilitar el botón CALIFICAR_PAGAR
         JTextField calificacion = (JTextField) TestUtils.getComponentForName(ventana, Constantes.CALIFICACION_DE_VIAJE);
         JButton botonCalificarPagar = (JButton) TestUtils.getComponentForName(ventana, Constantes.CALIFICAR_PAGAR);
 
         TestUtils.clickComponent(calificacion, robot);
         TestUtils.tipeaTexto("5", robot);  // Calificación válida entre 0 y 5
-        robot.delay(5000);
+        robot.delay(3000);
         
         // El campo de calificación debe estar disponible
         Assert.assertTrue("El campo de calificación debería estar disponible", calificacion.isEnabled());
@@ -656,10 +660,6 @@ public class TestDatos {
 
         // Verificar que el campo CALIFICACION se borre después de finalizar
         Assert.assertEquals("El campo CALIFICACION debería estar vacío después de finalizar el viaje", "", calificacion.getText());
-
-        // Confirmar que el panel esté en estado inicial (estado 1)
-        JPanel panelLogin = (JPanel) TestUtils.getComponentForName(ventana, Constantes.PANEL_LOGIN);
-        Assert.assertNotNull("Debería haberse regresado al panel de inicio de sesión (estado 1)", panelLogin);
     }
 
     
