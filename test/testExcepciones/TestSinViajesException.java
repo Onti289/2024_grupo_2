@@ -30,12 +30,11 @@ public class TestSinViajesException {
     @Test
     public void test() {
         try {
-        	double calificacion = empresa.calificacionDeChofer(chofer1);
+        	empresa.calificacionDeChofer(chofer1);
             // Si no se lanza la excepción, la prueba falla
             fail("Se esperaba excepción SinViajesException");
         } catch (SinViajesException e) {
             // Excepción esperada, la prueba pasa
         }
     }
-
 }
