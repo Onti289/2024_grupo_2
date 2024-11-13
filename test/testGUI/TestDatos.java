@@ -128,7 +128,6 @@ public class TestDatos {
         TestUtils.tipeaTexto("Asd123", robot);
         TestUtils.clickComponent(aceptarLog, robot);
 
-        robot.delay(1000);
                
         Assert.assertEquals("Mensaje incorrecto", Mensajes.USUARIO_DESCONOCIDO.getValor(), op.getMensaje());
     }
@@ -215,7 +214,6 @@ public class TestDatos {
         TestUtils.clickComponent(BRegistrar, robot);
         JButton BCancelar = (JButton) TestUtils.getComponentForName(ventana, Constantes.REG_BUTTON_CANCELAR);
         
-        robot.delay(2000);
         TestUtils.clickComponent(BCancelar, robot);
 
         // Verificar si el panel 'Panel_Login' ha sido añadido a la ventana
@@ -407,8 +405,7 @@ public class TestDatos {
         JCheckBox checkMascota = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_MASCOTA);
         JCheckBox checkBaul = (JCheckBox) TestUtils.getComponentForName(ventana, Constantes.CHECK_BAUL);
         
-        robot.delay(2000);
-        
+
         Assert.assertFalse("El campo CantPasajeros debería estar deshabilitado", cantPasajeros.isEnabled());
         Assert.assertFalse("El campo CantKm debería estar deshabilitado", cantKm.isEnabled());
         Assert.assertFalse("La zona stantard debería estar deshabilitada", ZonaStandard.isEnabled());
