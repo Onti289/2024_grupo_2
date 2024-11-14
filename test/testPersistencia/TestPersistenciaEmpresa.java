@@ -114,7 +114,7 @@ public class TestPersistenciaEmpresa {
 		Viaje viajeIniciado = empresa.getViajesIniciados().get(cliente1);
 		assertNotNull("El viaje iniciado no debería ser null", viajeIniciado);
 		
-		Viaje viajeFinalizados = empresa.getViajesTerminados().getFirst();
+		Viaje viajeFinalizados = empresa.getViajesTerminados().get(0);
 		assertNotNull("El viaje finalizado no debería ser null", viajeFinalizados);
     }
 }
