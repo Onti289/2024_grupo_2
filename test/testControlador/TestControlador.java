@@ -5,8 +5,7 @@ import modeloNegocio.Empresa;
 import vista.IVista;
 import org.junit.Before;
 import org.junit.Test;
-import org.
-import org.
+import org.mockito.*;
 import persistencia.IPersistencia;
 import static org.junit.Assert.*;
 
